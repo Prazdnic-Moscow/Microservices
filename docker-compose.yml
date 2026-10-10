@@ -1,0 +1,15 @@
+services:
+  order-db:
+    image: postgres:17
+    container_name: order-postgres # имя контейнера, чтобы не искать его по id
+    environment:
+      POSTGRES_USER: postgres          # юзер базы
+      POSTGRES_PASSWORD: postgres # пароль (ОБЯЗАТЕЛЬНО)
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"             # хост:контейнер — если 5432 занят, поставь "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # данные живут вне контейнера
+
+volumes:
+  pgdata:                       # именованный volume, Docker создаст сам

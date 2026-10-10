@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AmplicodePersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit moduleName="my-microservices.delivery-service.main" name="Default">
+        <packages>
+          <package value="org.example.deliveryservice" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="my-microservices.order-service.main" name="Default">
+        <packages>
+          <package value="org.example.orderservice" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="my-microservices.payment-service.main" name="Default">
+        <packages>
+          <package value="org.example.paymentservice" />
+        </packages>
+      </persistence-unit>
+    </persistence-units>
+  </component>
+</project>
