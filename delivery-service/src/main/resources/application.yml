@@ -1,0 +1,13 @@
+
+spring:
+  application:
+    name: delivery-service
+  datasource:
+    url: jdbc:postgresql://localhost:5433/postgres
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+server:
+  port: 8082

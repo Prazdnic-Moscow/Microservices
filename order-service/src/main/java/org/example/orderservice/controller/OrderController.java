@@ -28,11 +28,6 @@ public class OrderController {
 
     }
 
-    @PostMapping("/{id}/payment")
-    public Boolean updateStatusOrder(@PathVariable("id") Long id){
-        return orderService.updateStatusOrder(id);
-    }
-
     @PostMapping("/{id}/pay")
     public OrderDto createPayment(@PathVariable("id") Long id,
                                   @RequestBody org.example.library.payment.PaymentDto paymentDto){

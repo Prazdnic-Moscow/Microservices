@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.example.library.order.enumirate.OrderStatus;
 import org.example.library.payment.enumirate.PaymentStatus;
 import org.example.orderservice.OrderMapper;
-import org.example.library.order.enumirate.OrderStatus;
 import org.example.library.order.OrderDto;
 import org.example.library.order.OrderEntity;
 import org.example.library.order.Product;
@@ -53,24 +52,7 @@ public class OrderService {
         return orderMapper.toOrderDto(orderEntity);
     }
 
-    public Boolean updateStatusOrder(Long id) {
-
-        OrderEntity orderEntity = orderRepository
-                .findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found by id " + id));
-        log.info("before setStatusOrder");
-        orderEntity.setOrderStatus(OrderStatus.APPROVED);
-        orderRepository.save(orderEntity);
-        return true;
-    }
-
     private BigDecimal calculatePrice(OrderEntity orderEntity) {
-//        return orderEntity.getProducts()
-//                .stream()
-//                .map(product -> product
-//                        .getPrice()
-//                        .multiply(BigDecimal.valueOf(product.getCount())))
-//                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal result = BigDecimal.ZERO;
         for (Product product : orderEntity.getProducts()) {
@@ -82,18 +64,18 @@ public class OrderService {
 
     public OrderDto createPayment(Long id,
                                   org.example.library.payment.PaymentDto paymentDto) {
+
         OrderEntity orderEntity = orderRepository
                 .findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found by id " + id));
 
-        if(!orderEntity.getOrderStatus().equals(OrderStatus.PENDING)){
+        if (orderEntity.getOrderStatus() == null || !orderEntity.getOrderStatus().equals(OrderStatus.PENDING)) {
             throw new RuntimeException("order must be a PENDING status");
         }
         var response = paymentHttpClient.createPayment(
                 org.example.library.payment.PaymentDto.builder()
                 .orderId(id)
                 .paymentMethod(paymentDto.paymentMethod())
-                .amount(paymentDto.amount())
                 .build());
 
         if(response.paymentStatus().equals(PaymentStatus.PAYMENT_COMPLETED)) {

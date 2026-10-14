@@ -18,6 +18,11 @@
         </packages>
       </persistence-unit>
       <persistence-unit moduleName="my-microservices.library.main" name="Default" />
+      <persistence-unit moduleName="my-microservices.delivery-service.main" name="Default">
+        <packages>
+          <package value="org.example.deliveryservice" />
+        </packages>
+      </persistence-unit>
     </persistence-units>
   </component>
 </project>
