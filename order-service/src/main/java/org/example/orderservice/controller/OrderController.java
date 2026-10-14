@@ -1,13 +1,15 @@
 package org.example.orderservice.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.orderservice.dto.OrderDto;
+import lombok.extern.slf4j.Slf4j;
+import org.example.library.order.OrderDto;
 import org.example.orderservice.service.OrderService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
@@ -26,9 +28,16 @@ public class OrderController {
 
     }
 
-    @PostMapping("/{id}/pay")
+    @PostMapping("/{id}/payment")
     public Boolean updateStatusOrder(@PathVariable("id") Long id){
         return orderService.updateStatusOrder(id);
+    }
+
+    @PostMapping("/{id}/pay")
+    public OrderDto createPayment(@PathVariable("id") Long id,
+                                  @RequestBody org.example.library.payment.PaymentDto paymentDto){
+        log.info("Метод установки оплаты микросервис!!!!!!!!!!!!!!!!!!!!!!!!!");
+        return orderService.createPayment(id, paymentDto);
     }
 
 }

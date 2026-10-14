@@ -1,11 +1,14 @@
 package org.example.orderservice.service;
 
 import lombok.AllArgsConstructor;
+import org.example.library.order.enumirate.OrderStatus;
+import org.example.library.payment.enumirate.PaymentStatus;
 import org.example.orderservice.OrderMapper;
-import org.example.orderservice.StatusOrder;
-import org.example.orderservice.dto.OrderDto;
-import org.example.orderservice.entity.OrderEntity;
-import org.example.orderservice.entity.Product;
+import org.example.library.order.enumirate.OrderStatus;
+import org.example.library.order.OrderDto;
+import org.example.library.order.OrderEntity;
+import org.example.library.order.Product;
+import org.example.orderservice.external.PaymentHttpClient;
 import org.example.orderservice.repository.OrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +24,7 @@ public class OrderService {
     private static final Logger log = LoggerFactory.getLogger(OrderService.class);
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
+    private final PaymentHttpClient paymentHttpClient;
 
 
     public List<OrderDto> getOrderById(Long id, Pageable pageable) {
@@ -41,8 +45,10 @@ public class OrderService {
                         .stream()
                         .map(it -> orderMapper.toProductEntity(it)).toList(),
                 null,
-                StatusOrder.PENDING
+                OrderStatus.PENDING
         );
+
+        orderEntity.setAllPrice(calculatePrice(orderEntity));
         orderRepository.save(orderEntity);
         return orderMapper.toOrderDto(orderEntity);
     }
@@ -52,10 +58,8 @@ public class OrderService {
         OrderEntity orderEntity = orderRepository
                 .findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found by id " + id));
-
-        orderEntity.setAllPrice(calculatePrice(orderEntity));
         log.info("before setStatusOrder");
-        orderEntity.setStatusOrder(StatusOrder.APPROVED);
+        orderEntity.setOrderStatus(OrderStatus.APPROVED);
         orderRepository.save(orderEntity);
         return true;
     }
@@ -74,5 +78,34 @@ public class OrderService {
                     product.getPrice().multiply(BigDecimal.valueOf(product.getCount())));
         }
         return result;
+    }
+
+    public OrderDto createPayment(Long id,
+                                  org.example.library.payment.PaymentDto paymentDto) {
+        OrderEntity orderEntity = orderRepository
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found by id " + id));
+
+        if(!orderEntity.getOrderStatus().equals(OrderStatus.PENDING)){
+            throw new RuntimeException("order must be a PENDING status");
+        }
+        var response = paymentHttpClient.createPayment(
+                org.example.library.payment.PaymentDto.builder()
+                .orderId(id)
+                .paymentMethod(paymentDto.paymentMethod())
+                .amount(paymentDto.amount())
+                .build());
+
+        if(response.paymentStatus().equals(PaymentStatus.PAYMENT_COMPLETED)) {
+            orderEntity.setOrderStatus(OrderStatus.PAID);
+        }
+        else {
+            orderEntity.setOrderStatus(OrderStatus.PAYMENT_FAILED);
+        }
+
+        var resultEntity = orderRepository.save(orderEntity);
+        return orderMapper.toOrderDto(resultEntity);
+
+
     }
 }

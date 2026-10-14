@@ -1,9 +1,9 @@
 package org.example.orderservice;
 
-import org.example.orderservice.dto.OrderDto;
-import org.example.orderservice.dto.ProductDto;
-import org.example.orderservice.entity.OrderEntity;
-import org.example.orderservice.entity.Product;
+import org.example.library.order.OrderDto;
+import org.example.library.order.ProductDto;
+import org.example.library.order.OrderEntity;
+import org.example.library.order.Product;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

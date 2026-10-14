@@ -2,9 +2,9 @@
 <project version="4">
   <component name="AmplicodePersistenceUnitSettings">
     <persistence-units>
-      <persistence-unit moduleName="my-microservices.delivery-service.main" name="Default">
+      <persistence-unit moduleName="library.main" name="Default">
         <packages>
-          <package value="org.example.deliveryservice" />
+          <package value="org.example.library" />
         </packages>
       </persistence-unit>
       <persistence-unit moduleName="my-microservices.order-service.main" name="Default">
@@ -17,6 +17,7 @@
           <package value="org.example.paymentservice" />
         </packages>
       </persistence-unit>
+      <persistence-unit moduleName="my-microservices.library.main" name="Default" />
     </persistence-units>
   </component>
 </project>
