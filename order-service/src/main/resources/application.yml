@@ -8,6 +8,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-
-payment-service:
-  base-url: http://localhost:8081//
+  http:
+    serviceclient:
+      payment:
+        base-url: http://localhost:8081//
